@@ -1,4 +1,5 @@
 import 'package:edusav/common/services/databases/daos/appartenance_dao.dart';
+import 'package:edusav/common/services/databases/daos/assignation_ecole_dao.dart';
 import 'package:edusav/common/services/databases/daos/curriculum_dao.dart';
 import 'package:edusav/common/services/databases/daos/ecole_dao.dart';
 import 'package:edusav/common/services/databases/daos/flashcard_dao.dart';
@@ -31,5 +32,6 @@ class DatabaseService {
   NiveauDao get niveaux => _db.niveauDao;
   EcoleDao get ecoles => _db.ecoleDao;
   PageDao get pages => _db.pageDao;
+  AssignationEcoleDao get assignationsEcole => _db.assignationEcoleDao;
   FlashcardDao get flashcards => _db.flashcardDao;
 }

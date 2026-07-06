@@ -35,6 +35,17 @@ class UtilisateurDao extends DatabaseAccessor<AppDatabase>
         ),
       );
 
+  // get by role name
+  Future<List<Utilisateur>> getByRoleName(String roleName) async {
+    final role = await (select(
+      roles,
+    )..where((r) => r.nomRole.equals(roleName))).getSingleOrNull();
+    if (role == null) {
+      return [];
+    }
+    return (select(utilisateurs)..where((u) => u.roleId.equals(role.id))).get();
+  }
+
   // 🔥 JOIN Role
   Future<List<(Utilisateur, Role?)>> getWithRole() async {
     final query = select(

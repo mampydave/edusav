@@ -103,28 +103,26 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     }
   }
 
-  Future<void> register({
+  Future<void> registerEleve({
     required String nom,
     required String email,
     required String password,
+    required String roleId,
     String? ecoleId,
     String? niveauId,
     String? anneeSco,
   }) async {
     state = const AsyncLoading();
-
     try {
       final db = ref.read(databaseServiceProvider);
       final uuid = const Uuid();
 
-      // 1. Vérifier si l'email existe déjà
-      final existingUser = await db.utilisateurs.getByEmail(email);
-      if (existingUser != null) {
+      final existing = await db.utilisateurs.getByEmail(email);
+      if (existing != null) {
         state = AsyncError('Cet email est déjà utilisé', StackTrace.current);
         return;
       }
 
-      // 2. Créer l'utilisateur
       final userId = uuid.v4();
       final passwordHash = sha256.convert(utf8.encode(password)).toString();
 
@@ -134,11 +132,11 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
           nom: nom.trim(),
           email: email.trim().toLowerCase(),
           mdp: passwordHash,
+          roleId: Value(roleId),
           dateCrea: DateTime.now().millisecondsSinceEpoch,
         ),
       );
 
-      // 3. Créer l'appartenance si l'utilisateur a choisi une école
       if (ecoleId != null && anneeSco != null && anneeSco.isNotEmpty) {
         await db.appartenances.insert(
           AppartenancesCompanion.insert(
@@ -147,33 +145,79 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
             ecoleId: ecoleId,
             niveauId: Value(niveauId),
             anneeSco: anneeSco.trim(),
-            estActif: Value(true),
+            estActif: const Value(true),
             dateMiseAJour: DateTime.now().millisecondsSinceEpoch,
           ),
         );
       }
 
-      // 4. Connexion automatique après inscription
       await _storage.write(key: _currentUserKey, value: userId);
-      await _storage.write(
-        key: _authTokenKey,
-        value: 'offline_session_$userId',
-      );
-
-      // Récupérer l'utilisateur complet pour l'état
       final newUser = await db.utilisateurs.getById(userId);
-
       if (newUser != null) {
         state = AsyncData(AuthAuthenticated(newUser));
-      } else {
-        state = AsyncError(
-          'Erreur lors de la récupération du profil',
-          StackTrace.current,
-        );
       }
     } catch (e, st) {
-      // state = AsyncData(AuthError('Erreur lors de l\'inscription : ${e.toString()}'));
-      state = AsyncError('Erreur lors de l\'inscription : ${e.toString()}', st);
+      state = AsyncError('Erreur inscription élève : $e', st);
+    }
+  }
+
+  Future<void> registerStaff({
+    required String nom,
+    required String email,
+    required String password,
+    required String roleId,
+    required List<String> ecoleIds,
+  }) async {
+    state = const AsyncLoading();
+    try {
+      final db = ref.read(databaseServiceProvider);
+      final uuid = const Uuid();
+
+      final existing = await db.utilisateurs.getByEmail(email);
+      if (existing != null) {
+        state = AsyncError('Cet email est déjà utilisé', StackTrace.current);
+        return;
+      }
+
+      final userId = uuid.v4();
+      final passwordHash = sha256.convert(utf8.encode(password)).toString();
+
+      // 1. Créer l'utilisateur (inactif pour les rôles sensibles)
+      await db.utilisateurs.insert(
+        UtilisateursCompanion.insert(
+          id: userId,
+          nom: nom.trim(),
+          email: email.trim().toLowerCase(),
+          mdp: passwordHash,
+          roleId: Value(roleId),
+          dateCrea: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+
+      // 2. Créer les assignations en statut PENDING
+      for (final ecoleId in ecoleIds) {
+        await db.assignationsEcole.insertAssignation(
+          AssignationsEcoleCompanion.insert(
+            id: uuid.v4(),
+            userId: userId,
+            ecoleId: ecoleId,
+            roleId: roleId,
+            dateDebut: DateTime.now(),
+            estActif: const Value(false), // Inactif jusqu'à validation
+            statut: const Value('PENDING'),
+          ),
+        );
+      }
+
+      // 3. Ne PAS connecter automatiquement
+      state = AsyncData(
+        AuthUnauthenticated(),
+      ); // ou un état "Compte créé en attente"
+
+      // Message de succès
+      // Tu peux afficher un message via un listener dans le screen
+    } catch (e, st) {
+      state = AsyncError('Erreur inscription staff : $e', st);
     }
   }
 
