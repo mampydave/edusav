@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:edusav/common/services/seed_service.dart';
 import 'package:edusav/core/di/providers.dart';
 import 'package:edusav/core/theme/app_theme.dart';
 import 'package:edusav/features/auth/login_screen.dart';
@@ -23,6 +24,12 @@ import 'package:flutter_quill/flutter_quill.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // recommandé pour shared_preferences / secure_storage
+
+  final container = ProviderContainer();
+  final seedService = container.read(seedServiceProvider);
+
+  await seedService.initializeRoles();
+  await seedService.initializeAdminUser();
 
   await initCamera();
 

@@ -7,5 +7,19 @@ part 'role_dao.g.dart';
 class RoleDao extends DatabaseAccessor<AppDatabase> with _$RoleDaoMixin {
   RoleDao(super.db);
 
+  Future<int> insert(RolesCompanion companion) => into(roles).insert(companion);
+
   Future<List<Role>> getAll() => select(roles).get();
+
+  // liste role sans admin
+  Future<List<Role>> getAllWithoutAdmin() =>
+      (select(roles)..where((r) => r.nomRole.isNotIn(['ADMIN']))).get();
+  // get role id by name
+  Future<String?> getRoleIdByName(String name) async {
+    final role = await getByName(name);
+    return role?.id;
+  }
+
+  Future<Role?> getByName(String name) =>
+      (select(roles)..where((r) => r.nomRole.equals(name))).getSingleOrNull();
 }

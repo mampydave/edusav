@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:edusav/common/services/databases/daos/appartenance_dao.dart';
+import 'package:edusav/common/services/databases/daos/assignation_ecole_dao.dart';
 import 'package:edusav/common/services/databases/daos/curriculum_dao.dart';
 import 'package:edusav/common/services/databases/daos/ecole_dao.dart';
 import 'package:edusav/common/services/databases/daos/flashcard_dao.dart';
@@ -23,7 +24,7 @@ part 'database.g.dart'; // généré automatiquement par Drift, ne pas toucher
     Roles, Permissions, RolePermissions,
     Ecoles, Niveaux, Utilisateurs, Appartenances,
     Matieres, Lecons, Curriculums, Pages,
-    Flashcards,
+    Flashcards, AssignationsEcole,
     // Revisions,
     // Roles, Permissions, RolePermissions → à ajouter plus tard
   ],
@@ -38,6 +39,7 @@ part 'database.g.dart'; // généré automatiquement par Drift, ne pas toucher
     NiveauDao,
     EcoleDao,
     PageDao,
+    AssignationEcoleDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {

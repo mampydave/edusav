@@ -1,5 +1,6 @@
 import 'package:edusav/common/services/databases/database.dart';
 import 'package:edusav/core/di/auth_provider.dart';
+import 'package:edusav/core/di/role_provider.dart';
 import 'package:edusav/core/di/school_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,9 +24,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _agreeTerms = false;
   bool _isLoading = false;
 
-  // Champs scolaires
+  Role? _selectedRole;
   Ecole? _selectedEcole;
   Niveau? _selectedNiveau;
+  List<Ecole> _selectedEcoles = [];
 
   @override
   void dispose() {
@@ -41,7 +43,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final authState = ref.watch(authNotifierProvider);
-
+    final rolesAsync = ref.watch(rolesProvider);
     final ecolesAsync = ref.watch(ecolesProvider);
     final niveauxAsync = ref.watch(niveauxProvider);
 
@@ -63,7 +65,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             children: [
               const SizedBox(height: 20),
 
-              // Header
+              // Header (identique à avant)
               Center(
                 child: Column(
                   children: [
@@ -98,6 +100,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
               const SizedBox(height: 40),
 
+              // === CHOIX DU RÔLE ===
+              const Text(
+                "Je suis un(e) :",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+
+              rolesAsync.when(
+                data: (roles) => Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: roles.map((role) => _buildRoleChip(role)).toList(),
+                ),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (_, __) => const Text("Erreur de chargement des rôles"),
+              ),
+
+              const SizedBox(height: 32),
+
               // Nom complet
               TextField(
                 controller: _nameController,
@@ -129,7 +150,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Mot de passe + Confirmation (inchangé)
+              // Mot de passe
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -154,6 +175,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
               const SizedBox(height: 20),
 
+              // Confirmation mot de passe
               TextField(
                 controller: _confirmPasswordController,
                 obscureText: _obscureConfirm,
@@ -178,109 +200,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               const SizedBox(height: 32),
 
               // === SECTION SCOLAIRE ===
-              Text(
-                "Informations scolaires (facultatif)",
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 16),
-
-              // === Recherche d'école avec Autocomplete (version mobile-friendly) ===
-              ecolesAsync.when(
-                data: (ecoles) => Autocomplete<Ecole>(
-                  optionsBuilder: (TextEditingValue textEditingValue) {
-                    if (textEditingValue.text.isEmpty) {
-                      return const Iterable<Ecole>.empty();
-                    }
-                    return ecoles.where(
-                      (ecole) => ecole.nom.toLowerCase().contains(
-                        textEditingValue.text.toLowerCase(),
-                      ),
-                    );
-                  },
-                  displayStringForOption: (ecole) => ecole.nom,
-                  onSelected: (Ecole ecole) {
-                    setState(() {
-                      _selectedEcole = ecole;
-                      _selectedNiveau = null; // reset niveau quand école change
-                    });
-                  },
-                  fieldViewBuilder:
-                      (
-                        BuildContext context,
-                        TextEditingController fieldTextEditingController,
-                        FocusNode fieldFocusNode,
-                        VoidCallback onFieldSubmitted,
-                      ) {
-                        return TextField(
-                          controller: fieldTextEditingController,
-                          focusNode: fieldFocusNode,
-                          decoration: InputDecoration(
-                            labelText: 'École',
-                            hintText: 'Rechercher une école...',
-                            prefixIcon: const Icon(Icons.school_outlined),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                          ),
-                          onSubmitted: (value) => onFieldSubmitted(),
-                        );
-                      },
-                ),
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => const Text('Erreur de chargement des écoles'),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Niveau (filtré par école sélectionnée)
-              DropdownButtonFormField<Niveau>(
-                value: _selectedNiveau,
-                decoration: InputDecoration(
-                  labelText: 'Niveau',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+              if (_selectedRole != null)
+                Text(
+                  _selectedRole!.nomRole.toUpperCase() == 'ELEVE'
+                      ? "Informations scolaires (facultatif)"
+                      : "Assignation aux écoles",
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                hint: const Text('Choisissez votre niveau'),
-                items: _selectedEcole == null
-                    ? null
-                    : niveauxAsync.when(
-                        data: (allNiveaux) {
-                          final filtered = allNiveaux
-                              .where((n) => n.ecoleId == _selectedEcole!.id)
-                              .toList();
-                          return filtered
-                              .map(
-                                (n) => DropdownMenuItem(
-                                  value: n,
-                                  child: Text(n.nomNiveau),
-                                ),
-                              )
-                              .toList();
-                        },
-                        loading: () => [],
-                        error: (_, __) => [],
-                      ),
-                onChanged: (value) => setState(() => _selectedNiveau = value),
-              ),
 
               const SizedBox(height: 16),
 
-              // Année scolaire
-              TextField(
-                controller: _anneeScolaireController,
-                decoration: InputDecoration(
-                  labelText: 'Année scolaire (ex: 2025-2026)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  hintText: '2025-2026',
-                ),
-              ),
+              if (_selectedRole != null)
+                _buildSchoolSection(ecolesAsync, niveauxAsync),
 
               const SizedBox(height: 24),
 
@@ -354,7 +287,160 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
+  Widget _buildRoleChip(Role role) {
+    final isSelected = _selectedRole?.id == role.id;
+    return ChoiceChip(
+      label: Text(role.nomRole),
+      selected: isSelected,
+      onSelected: (selected) {
+        setState(() {
+          _selectedRole = selected ? role : null;
+          _selectedEcole = null;
+          _selectedNiveau = null;
+          _selectedEcoles.clear();
+        });
+      },
+    );
+  }
+
+  Widget _buildSchoolSection(
+    AsyncValue<List<Ecole>> ecolesAsync,
+    AsyncValue<List<Niveau>> niveauxAsync,
+  ) {
+    if (_selectedRole!.nomRole.toUpperCase() == 'ELEVE') {
+      return _buildEleveSchoolSection(ecolesAsync, niveauxAsync);
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ecolesAsync.when(
+            data: (ecoles) => Wrap(
+              spacing: 8,
+              children: ecoles.map((ecole) {
+                final selected = _selectedEcoles.any((e) => e.id == ecole.id);
+                return FilterChip(
+                  label: Text(ecole.nom),
+                  selected: selected,
+                  onSelected: (sel) {
+                    setState(() {
+                      if (sel) {
+                        _selectedEcoles.add(ecole);
+                      } else {
+                        _selectedEcoles.removeWhere((e) => e.id == ecole.id);
+                      }
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            loading: () => const CircularProgressIndicator(),
+            error: (_, __) => const Text('Erreur de chargement'),
+          ),
+        ],
+      );
+    }
+  }
+
+  Widget _buildEleveSchoolSection(
+    AsyncValue<List<Ecole>> ecolesAsync,
+    AsyncValue<List<Niveau>> niveauxAsync,
+  ) {
+    return Column(
+      children: [
+        ecolesAsync.when(
+          data: (ecoles) => Autocomplete<Ecole>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text.isEmpty)
+                return const Iterable<Ecole>.empty();
+              return ecoles.where(
+                (ecole) => ecole.nom.toLowerCase().contains(
+                  textEditingValue.text.toLowerCase(),
+                ),
+              );
+            },
+            displayStringForOption: (ecole) => ecole.nom,
+            onSelected: (Ecole ecole) {
+              setState(() {
+                _selectedEcole = ecole;
+                _selectedNiveau = null;
+              });
+            },
+            fieldViewBuilder:
+                (
+                  context,
+                  fieldTextEditingController,
+                  fieldFocusNode,
+                  onFieldSubmitted,
+                ) {
+                  return TextField(
+                    controller: fieldTextEditingController,
+                    focusNode: fieldFocusNode,
+                    decoration: InputDecoration(
+                      labelText: 'École',
+                      hintText: 'Rechercher une école...',
+                      prefixIcon: const Icon(Icons.school_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                    ),
+                    onSubmitted: (value) => onFieldSubmitted(),
+                  );
+                },
+          ),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (_, __) => const Text('Erreur de chargement des écoles'),
+        ),
+        const SizedBox(height: 16),
+        DropdownButtonFormField<Niveau>(
+          value: _selectedNiveau,
+          decoration: InputDecoration(
+            labelText: 'Niveau',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          hint: const Text('Choisissez votre niveau'),
+          items: _selectedEcole == null
+              ? null
+              : niveauxAsync.when(
+                  data: (allNiveaux) {
+                    final filtered = allNiveaux
+                        .where((n) => n.ecoleId == _selectedEcole!.id)
+                        .toList();
+                    return filtered
+                        .map(
+                          (n) => DropdownMenuItem(
+                            value: n,
+                            child: Text(n.nomNiveau),
+                          ),
+                        )
+                        .toList();
+                  },
+                  loading: () => [],
+                  error: (_, __) => [],
+                ),
+          onChanged: (value) => setState(() => _selectedNiveau = value),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _anneeScolaireController,
+          decoration: InputDecoration(
+            labelText: 'Année scolaire (ex: 2025-2026)',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            hintText: '2025-2026',
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> _handleRegister() async {
+    if (_selectedRole == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Veuillez choisir un rôle')));
+      return;
+    }
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Les mots de passe ne correspondent pas')),
@@ -370,18 +456,29 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     setState(() => _isLoading = true);
 
-    await ref
-        .read(authNotifierProvider.notifier)
-        .register(
-          nom: _nameController.text.trim(),
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          ecoleId: _selectedEcole?.id,
-          niveauId: _selectedNiveau?.id,
-          anneeSco: _anneeScolaireController.text.trim().isNotEmpty
-              ? _anneeScolaireController.text.trim()
-              : null,
-        );
+    final notifier = ref.read(authNotifierProvider.notifier);
+
+    if (_selectedRole!.nomRole.toUpperCase() == 'ELEVE') {
+      await notifier.registerEleve(
+        nom: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        roleId: _selectedRole!.id,
+        ecoleId: _selectedEcole?.id,
+        niveauId: _selectedNiveau?.id,
+        anneeSco: _anneeScolaireController.text.trim().isNotEmpty
+            ? _anneeScolaireController.text.trim()
+            : null,
+      );
+    } else {
+      await notifier.registerStaff(
+        nom: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        roleId: _selectedRole!.id,
+        ecoleIds: _selectedEcoles.map((e) => e.id).toList(),
+      );
+    }
 
     setState(() => _isLoading = false);
   }

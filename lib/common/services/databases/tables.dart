@@ -125,6 +125,24 @@ class Appartenances extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('AssignationEcole')
+class AssignationsEcole extends Table {
+  TextColumn get id => text()();
+
+  TextColumn get userId => text()();
+  TextColumn get ecoleId => text()();
+  TextColumn get roleId => text()();
+
+  DateTimeColumn get dateDebut => dateTime()();
+  DateTimeColumn get dateFin => dateTime().nullable()();
+
+  TextColumn get statut => text().withDefault(const Constant('PENDING'))();
+  BoolColumn get estActif => boolean().withDefault(const Constant(true))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// ==========================================================
 /// 4. PEDAGOGIQUE
 /// ==========================================================

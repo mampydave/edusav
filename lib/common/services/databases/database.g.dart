@@ -4963,6 +4963,513 @@ class FlashcardsCompanion extends UpdateCompanion<Flashcard> {
   }
 }
 
+class $AssignationsEcoleTable extends AssignationsEcole
+    with TableInfo<$AssignationsEcoleTable, AssignationEcole> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AssignationsEcoleTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ecoleIdMeta = const VerificationMeta(
+    'ecoleId',
+  );
+  @override
+  late final GeneratedColumn<String> ecoleId = GeneratedColumn<String>(
+    'ecole_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _roleIdMeta = const VerificationMeta('roleId');
+  @override
+  late final GeneratedColumn<String> roleId = GeneratedColumn<String>(
+    'role_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateDebutMeta = const VerificationMeta(
+    'dateDebut',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dateDebut = GeneratedColumn<DateTime>(
+    'date_debut',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateFinMeta = const VerificationMeta(
+    'dateFin',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dateFin = GeneratedColumn<DateTime>(
+    'date_fin',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statutMeta = const VerificationMeta('statut');
+  @override
+  late final GeneratedColumn<String> statut = GeneratedColumn<String>(
+    'statut',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('PENDING'),
+  );
+  static const VerificationMeta _estActifMeta = const VerificationMeta(
+    'estActif',
+  );
+  @override
+  late final GeneratedColumn<bool> estActif = GeneratedColumn<bool>(
+    'est_actif',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("est_actif" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    ecoleId,
+    roleId,
+    dateDebut,
+    dateFin,
+    statut,
+    estActif,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'assignations_ecole';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AssignationEcole> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('ecole_id')) {
+      context.handle(
+        _ecoleIdMeta,
+        ecoleId.isAcceptableOrUnknown(data['ecole_id']!, _ecoleIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ecoleIdMeta);
+    }
+    if (data.containsKey('role_id')) {
+      context.handle(
+        _roleIdMeta,
+        roleId.isAcceptableOrUnknown(data['role_id']!, _roleIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_roleIdMeta);
+    }
+    if (data.containsKey('date_debut')) {
+      context.handle(
+        _dateDebutMeta,
+        dateDebut.isAcceptableOrUnknown(data['date_debut']!, _dateDebutMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateDebutMeta);
+    }
+    if (data.containsKey('date_fin')) {
+      context.handle(
+        _dateFinMeta,
+        dateFin.isAcceptableOrUnknown(data['date_fin']!, _dateFinMeta),
+      );
+    }
+    if (data.containsKey('statut')) {
+      context.handle(
+        _statutMeta,
+        statut.isAcceptableOrUnknown(data['statut']!, _statutMeta),
+      );
+    }
+    if (data.containsKey('est_actif')) {
+      context.handle(
+        _estActifMeta,
+        estActif.isAcceptableOrUnknown(data['est_actif']!, _estActifMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AssignationEcole map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AssignationEcole(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      ecoleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ecole_id'],
+      )!,
+      roleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role_id'],
+      )!,
+      dateDebut: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date_debut'],
+      )!,
+      dateFin: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date_fin'],
+      ),
+      statut: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}statut'],
+      )!,
+      estActif: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}est_actif'],
+      )!,
+    );
+  }
+
+  @override
+  $AssignationsEcoleTable createAlias(String alias) {
+    return $AssignationsEcoleTable(attachedDatabase, alias);
+  }
+}
+
+class AssignationEcole extends DataClass
+    implements Insertable<AssignationEcole> {
+  final String id;
+  final String userId;
+  final String ecoleId;
+  final String roleId;
+  final DateTime dateDebut;
+  final DateTime? dateFin;
+  final String statut;
+  final bool estActif;
+  const AssignationEcole({
+    required this.id,
+    required this.userId,
+    required this.ecoleId,
+    required this.roleId,
+    required this.dateDebut,
+    this.dateFin,
+    required this.statut,
+    required this.estActif,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['ecole_id'] = Variable<String>(ecoleId);
+    map['role_id'] = Variable<String>(roleId);
+    map['date_debut'] = Variable<DateTime>(dateDebut);
+    if (!nullToAbsent || dateFin != null) {
+      map['date_fin'] = Variable<DateTime>(dateFin);
+    }
+    map['statut'] = Variable<String>(statut);
+    map['est_actif'] = Variable<bool>(estActif);
+    return map;
+  }
+
+  AssignationsEcoleCompanion toCompanion(bool nullToAbsent) {
+    return AssignationsEcoleCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      ecoleId: Value(ecoleId),
+      roleId: Value(roleId),
+      dateDebut: Value(dateDebut),
+      dateFin: dateFin == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dateFin),
+      statut: Value(statut),
+      estActif: Value(estActif),
+    );
+  }
+
+  factory AssignationEcole.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AssignationEcole(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      ecoleId: serializer.fromJson<String>(json['ecoleId']),
+      roleId: serializer.fromJson<String>(json['roleId']),
+      dateDebut: serializer.fromJson<DateTime>(json['dateDebut']),
+      dateFin: serializer.fromJson<DateTime?>(json['dateFin']),
+      statut: serializer.fromJson<String>(json['statut']),
+      estActif: serializer.fromJson<bool>(json['estActif']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'ecoleId': serializer.toJson<String>(ecoleId),
+      'roleId': serializer.toJson<String>(roleId),
+      'dateDebut': serializer.toJson<DateTime>(dateDebut),
+      'dateFin': serializer.toJson<DateTime?>(dateFin),
+      'statut': serializer.toJson<String>(statut),
+      'estActif': serializer.toJson<bool>(estActif),
+    };
+  }
+
+  AssignationEcole copyWith({
+    String? id,
+    String? userId,
+    String? ecoleId,
+    String? roleId,
+    DateTime? dateDebut,
+    Value<DateTime?> dateFin = const Value.absent(),
+    String? statut,
+    bool? estActif,
+  }) => AssignationEcole(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    ecoleId: ecoleId ?? this.ecoleId,
+    roleId: roleId ?? this.roleId,
+    dateDebut: dateDebut ?? this.dateDebut,
+    dateFin: dateFin.present ? dateFin.value : this.dateFin,
+    statut: statut ?? this.statut,
+    estActif: estActif ?? this.estActif,
+  );
+  AssignationEcole copyWithCompanion(AssignationsEcoleCompanion data) {
+    return AssignationEcole(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      ecoleId: data.ecoleId.present ? data.ecoleId.value : this.ecoleId,
+      roleId: data.roleId.present ? data.roleId.value : this.roleId,
+      dateDebut: data.dateDebut.present ? data.dateDebut.value : this.dateDebut,
+      dateFin: data.dateFin.present ? data.dateFin.value : this.dateFin,
+      statut: data.statut.present ? data.statut.value : this.statut,
+      estActif: data.estActif.present ? data.estActif.value : this.estActif,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AssignationEcole(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('ecoleId: $ecoleId, ')
+          ..write('roleId: $roleId, ')
+          ..write('dateDebut: $dateDebut, ')
+          ..write('dateFin: $dateFin, ')
+          ..write('statut: $statut, ')
+          ..write('estActif: $estActif')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    userId,
+    ecoleId,
+    roleId,
+    dateDebut,
+    dateFin,
+    statut,
+    estActif,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AssignationEcole &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.ecoleId == this.ecoleId &&
+          other.roleId == this.roleId &&
+          other.dateDebut == this.dateDebut &&
+          other.dateFin == this.dateFin &&
+          other.statut == this.statut &&
+          other.estActif == this.estActif);
+}
+
+class AssignationsEcoleCompanion extends UpdateCompanion<AssignationEcole> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<String> ecoleId;
+  final Value<String> roleId;
+  final Value<DateTime> dateDebut;
+  final Value<DateTime?> dateFin;
+  final Value<String> statut;
+  final Value<bool> estActif;
+  final Value<int> rowid;
+  const AssignationsEcoleCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.ecoleId = const Value.absent(),
+    this.roleId = const Value.absent(),
+    this.dateDebut = const Value.absent(),
+    this.dateFin = const Value.absent(),
+    this.statut = const Value.absent(),
+    this.estActif = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AssignationsEcoleCompanion.insert({
+    required String id,
+    required String userId,
+    required String ecoleId,
+    required String roleId,
+    required DateTime dateDebut,
+    this.dateFin = const Value.absent(),
+    this.statut = const Value.absent(),
+    this.estActif = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       userId = Value(userId),
+       ecoleId = Value(ecoleId),
+       roleId = Value(roleId),
+       dateDebut = Value(dateDebut);
+  static Insertable<AssignationEcole> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<String>? ecoleId,
+    Expression<String>? roleId,
+    Expression<DateTime>? dateDebut,
+    Expression<DateTime>? dateFin,
+    Expression<String>? statut,
+    Expression<bool>? estActif,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (ecoleId != null) 'ecole_id': ecoleId,
+      if (roleId != null) 'role_id': roleId,
+      if (dateDebut != null) 'date_debut': dateDebut,
+      if (dateFin != null) 'date_fin': dateFin,
+      if (statut != null) 'statut': statut,
+      if (estActif != null) 'est_actif': estActif,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AssignationsEcoleCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<String>? ecoleId,
+    Value<String>? roleId,
+    Value<DateTime>? dateDebut,
+    Value<DateTime?>? dateFin,
+    Value<String>? statut,
+    Value<bool>? estActif,
+    Value<int>? rowid,
+  }) {
+    return AssignationsEcoleCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      ecoleId: ecoleId ?? this.ecoleId,
+      roleId: roleId ?? this.roleId,
+      dateDebut: dateDebut ?? this.dateDebut,
+      dateFin: dateFin ?? this.dateFin,
+      statut: statut ?? this.statut,
+      estActif: estActif ?? this.estActif,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (ecoleId.present) {
+      map['ecole_id'] = Variable<String>(ecoleId.value);
+    }
+    if (roleId.present) {
+      map['role_id'] = Variable<String>(roleId.value);
+    }
+    if (dateDebut.present) {
+      map['date_debut'] = Variable<DateTime>(dateDebut.value);
+    }
+    if (dateFin.present) {
+      map['date_fin'] = Variable<DateTime>(dateFin.value);
+    }
+    if (statut.present) {
+      map['statut'] = Variable<String>(statut.value);
+    }
+    if (estActif.present) {
+      map['est_actif'] = Variable<bool>(estActif.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AssignationsEcoleCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('ecoleId: $ecoleId, ')
+          ..write('roleId: $roleId, ')
+          ..write('dateDebut: $dateDebut, ')
+          ..write('dateFin: $dateFin, ')
+          ..write('statut: $statut, ')
+          ..write('estActif: $estActif, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4980,6 +5487,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CurriculumsTable curriculums = $CurriculumsTable(this);
   late final $PagesTable pages = $PagesTable(this);
   late final $FlashcardsTable flashcards = $FlashcardsTable(this);
+  late final $AssignationsEcoleTable assignationsEcole =
+      $AssignationsEcoleTable(this);
   late final LeconDao leconDao = LeconDao(this as AppDatabase);
   late final UtilisateurDao utilisateurDao = UtilisateurDao(
     this as AppDatabase,
@@ -4994,6 +5503,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final NiveauDao niveauDao = NiveauDao(this as AppDatabase);
   late final EcoleDao ecoleDao = EcoleDao(this as AppDatabase);
   late final PageDao pageDao = PageDao(this as AppDatabase);
+  late final AssignationEcoleDao assignationEcoleDao = AssignationEcoleDao(
+    this as AppDatabase,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5011,6 +5523,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     curriculums,
     pages,
     flashcards,
+    assignationsEcole,
   ];
 }
 
@@ -11633,6 +12146,276 @@ typedef $$FlashcardsTableProcessedTableManager =
         bool userId,
       })
     >;
+typedef $$AssignationsEcoleTableCreateCompanionBuilder =
+    AssignationsEcoleCompanion Function({
+      required String id,
+      required String userId,
+      required String ecoleId,
+      required String roleId,
+      required DateTime dateDebut,
+      Value<DateTime?> dateFin,
+      Value<String> statut,
+      Value<bool> estActif,
+      Value<int> rowid,
+    });
+typedef $$AssignationsEcoleTableUpdateCompanionBuilder =
+    AssignationsEcoleCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<String> ecoleId,
+      Value<String> roleId,
+      Value<DateTime> dateDebut,
+      Value<DateTime?> dateFin,
+      Value<String> statut,
+      Value<bool> estActif,
+      Value<int> rowid,
+    });
+
+class $$AssignationsEcoleTableFilterComposer
+    extends Composer<_$AppDatabase, $AssignationsEcoleTable> {
+  $$AssignationsEcoleTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ecoleId => $composableBuilder(
+    column: $table.ecoleId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get roleId => $composableBuilder(
+    column: $table.roleId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dateDebut => $composableBuilder(
+    column: $table.dateDebut,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dateFin => $composableBuilder(
+    column: $table.dateFin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get statut => $composableBuilder(
+    column: $table.statut,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get estActif => $composableBuilder(
+    column: $table.estActif,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AssignationsEcoleTableOrderingComposer
+    extends Composer<_$AppDatabase, $AssignationsEcoleTable> {
+  $$AssignationsEcoleTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ecoleId => $composableBuilder(
+    column: $table.ecoleId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get roleId => $composableBuilder(
+    column: $table.roleId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get dateDebut => $composableBuilder(
+    column: $table.dateDebut,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get dateFin => $composableBuilder(
+    column: $table.dateFin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get statut => $composableBuilder(
+    column: $table.statut,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get estActif => $composableBuilder(
+    column: $table.estActif,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AssignationsEcoleTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AssignationsEcoleTable> {
+  $$AssignationsEcoleTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get ecoleId =>
+      $composableBuilder(column: $table.ecoleId, builder: (column) => column);
+
+  GeneratedColumn<String> get roleId =>
+      $composableBuilder(column: $table.roleId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dateDebut =>
+      $composableBuilder(column: $table.dateDebut, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dateFin =>
+      $composableBuilder(column: $table.dateFin, builder: (column) => column);
+
+  GeneratedColumn<String> get statut =>
+      $composableBuilder(column: $table.statut, builder: (column) => column);
+
+  GeneratedColumn<bool> get estActif =>
+      $composableBuilder(column: $table.estActif, builder: (column) => column);
+}
+
+class $$AssignationsEcoleTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AssignationsEcoleTable,
+          AssignationEcole,
+          $$AssignationsEcoleTableFilterComposer,
+          $$AssignationsEcoleTableOrderingComposer,
+          $$AssignationsEcoleTableAnnotationComposer,
+          $$AssignationsEcoleTableCreateCompanionBuilder,
+          $$AssignationsEcoleTableUpdateCompanionBuilder,
+          (
+            AssignationEcole,
+            BaseReferences<
+              _$AppDatabase,
+              $AssignationsEcoleTable,
+              AssignationEcole
+            >,
+          ),
+          AssignationEcole,
+          PrefetchHooks Function()
+        > {
+  $$AssignationsEcoleTableTableManager(
+    _$AppDatabase db,
+    $AssignationsEcoleTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AssignationsEcoleTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AssignationsEcoleTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AssignationsEcoleTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<String> ecoleId = const Value.absent(),
+                Value<String> roleId = const Value.absent(),
+                Value<DateTime> dateDebut = const Value.absent(),
+                Value<DateTime?> dateFin = const Value.absent(),
+                Value<String> statut = const Value.absent(),
+                Value<bool> estActif = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AssignationsEcoleCompanion(
+                id: id,
+                userId: userId,
+                ecoleId: ecoleId,
+                roleId: roleId,
+                dateDebut: dateDebut,
+                dateFin: dateFin,
+                statut: statut,
+                estActif: estActif,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String userId,
+                required String ecoleId,
+                required String roleId,
+                required DateTime dateDebut,
+                Value<DateTime?> dateFin = const Value.absent(),
+                Value<String> statut = const Value.absent(),
+                Value<bool> estActif = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AssignationsEcoleCompanion.insert(
+                id: id,
+                userId: userId,
+                ecoleId: ecoleId,
+                roleId: roleId,
+                dateDebut: dateDebut,
+                dateFin: dateFin,
+                statut: statut,
+                estActif: estActif,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AssignationsEcoleTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AssignationsEcoleTable,
+      AssignationEcole,
+      $$AssignationsEcoleTableFilterComposer,
+      $$AssignationsEcoleTableOrderingComposer,
+      $$AssignationsEcoleTableAnnotationComposer,
+      $$AssignationsEcoleTableCreateCompanionBuilder,
+      $$AssignationsEcoleTableUpdateCompanionBuilder,
+      (
+        AssignationEcole,
+        BaseReferences<
+          _$AppDatabase,
+          $AssignationsEcoleTable,
+          AssignationEcole
+        >,
+      ),
+      AssignationEcole,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -11661,4 +12444,6 @@ class $AppDatabaseManager {
       $$PagesTableTableManager(_db, _db.pages);
   $$FlashcardsTableTableManager get flashcards =>
       $$FlashcardsTableTableManager(_db, _db.flashcards);
+  $$AssignationsEcoleTableTableManager get assignationsEcole =>
+      $$AssignationsEcoleTableTableManager(_db, _db.assignationsEcole);
 }
