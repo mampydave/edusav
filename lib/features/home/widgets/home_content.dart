@@ -264,8 +264,13 @@ class HomeContent extends ConsumerWidget {
     );
   }
 
-  void _showLogoutMenu(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
+  Future<void> _showLogoutMenu(BuildContext context, WidgetRef ref) async {
+    final isAdmin = await ref
+        .read(isCurrentUserAdminProvider.future)
+        .catchError((_) => false);
+    if (!context.mounted) return;
+
+    await showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -291,22 +296,20 @@ class HomeContent extends ConsumerWidget {
                 );
               },
             ),
-            ListTile(
-              leading: const Icon(
-                Icons.verified_user_outlined,
-                color: Colors.orange,
+            if (isAdmin)
+              ListTile(
+                leading: const Icon(
+                  Icons.verified_user_outlined,
+                  color: Colors.orange,
+                ),
+                title: const Text('Validation des comptes'),
+                subtitle: const Text('Demandes en attente d\'approbation'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/pending-requests');
+                },
               ),
-              title: const Text('Validation des comptes'),
-              subtitle: const Text('Demandes en attente d\'approbation'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(
-                  context,
-                  '/pending-requests',
-                ); // Ou utilise push si tu préfères
-              },
-            ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
