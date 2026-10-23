@@ -1,4 +1,4 @@
-import 'package:edusav/core/di/auth_provider.dart';
+import 'package:edusav/features/auth/presentation/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,17 +20,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void initState() {
     super.initState();
     Future.microtask(
-      () => ref.read(authNotifierProvider.notifier).checkCurrentUser(),
+      () => ref.read(authControllerProvider.notifier).checkCurrentUser(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final authState = ref.watch(authNotifierProvider);
+    final authState = ref.watch(authControllerProvider);
 
     // Listener pour redirection unique
-    ref.listen(authNotifierProvider, (prev, next) {
+    ref.listen(authControllerProvider, (prev, next) {
       next.whenData((state) {
         if (state is AuthAuthenticated) {
           Navigator.pushReplacementNamed(context, '/home');
@@ -149,7 +149,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         onPressed: () async {
                           setState(() => _isLoading = true);
                           await ref
-                              .read(authNotifierProvider.notifier)
+                              .read(authControllerProvider.notifier)
                               .login(
                                 _emailController.text.trim(),
                                 _passwordController.text,

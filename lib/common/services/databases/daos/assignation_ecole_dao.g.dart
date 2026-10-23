@@ -8,6 +8,7 @@ mixin _$AssignationEcoleDaoMixin on DatabaseAccessor<AppDatabase> {
       attachedDatabase.assignationsEcole;
   $RolesTable get roles => attachedDatabase.roles;
   $EcolesTable get ecoles => attachedDatabase.ecoles;
+  $UtilisateursTable get utilisateurs => attachedDatabase.utilisateurs;
   AssignationEcoleDaoManager get managers => AssignationEcoleDaoManager(this);
 }
 
@@ -23,4 +24,6 @@ class AssignationEcoleDaoManager {
       $$RolesTableTableManager(_db.attachedDatabase, _db.roles);
   $$EcolesTableTableManager get ecoles =>
       $$EcolesTableTableManager(_db.attachedDatabase, _db.ecoles);
+  $$UtilisateursTableTableManager get utilisateurs =>
+      $$UtilisateursTableTableManager(_db.attachedDatabase, _db.utilisateurs);
 }

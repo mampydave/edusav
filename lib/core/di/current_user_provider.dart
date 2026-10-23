@@ -1,17 +1,18 @@
 // lib/common/providers/current_user_provider.dart
-import 'package:edusav/core/di/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edusav/common/services/database_services.dart';
 import 'package:edusav/common/services/databases/database.dart';
+import 'package:edusav/features/auth/presentation/auth_controller.dart';
+import 'package:edusav/features/auth/domain/auth_user.dart';
 
-final currentUserProvider = Provider<Utilisateur?>((ref) {
-  final authAsync = ref.watch(authNotifierProvider);
+final currentUserProvider = Provider<AuthUser?>((ref) {
+  final authAsync = ref.watch(authControllerProvider);
 
   return authAsync.when(
     data: (authState) {
       if (authState is AuthAuthenticated) {
         print(
-          "✅ currentUserProvider → Utilisateur connecté : ${authState.user.nom}",
+          "✅ currentUserProvider → Utilisateur connecté : ${authState.user.name}",
         );
         return authState.user;
       } else {
@@ -43,7 +44,7 @@ final currentAppartenanceProvider = FutureProvider<Appartenance?>((ref) async {
   final active = appartenances.isNotEmpty ? appartenances.first : null;
   print(
     active != null
-        ? "✅ Appartenance active trouvée pour ${user.nom}"
+        ? "✅ Appartenance active trouvée pour ${user.name}"
         : "⚠️ Aucune appartenance active",
   );
 
@@ -51,7 +52,7 @@ final currentAppartenanceProvider = FutureProvider<Appartenance?>((ref) async {
 });
 
 final currentUserWithContextProvider =
-    FutureProvider<(Utilisateur?, Appartenance?, Ecole?, Niveau?)>((ref) async {
+    FutureProvider<(AuthUser?, Appartenance?, Ecole?, Niveau?)>((ref) async {
       final user = ref.watch(currentUserProvider);
       if (user == null) {
         print("⚠️ currentUserWithContextProvider → Aucun utilisateur");
@@ -62,7 +63,7 @@ final currentUserWithContextProvider =
       final appartenance = await ref.watch(currentAppartenanceProvider.future);
 
       if (appartenance == null) {
-        print("⚠️ Pas d'appartenance active pour ${user.nom}");
+        print("⚠️ Pas d'appartenance active pour ${user.name}");
         return (user, null, null, null);
       }
 
@@ -71,6 +72,6 @@ final currentUserWithContextProvider =
           ? await db.niveaux.getById(appartenance.niveauId!)
           : null;
 
-      print("✅ Contexte complet chargé pour ${user.nom}");
+      print("✅ Contexte complet chargé pour ${user.name}");
       return (user, appartenance, ecole, niveau);
     });

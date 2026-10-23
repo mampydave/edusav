@@ -6,6 +6,7 @@ import 'package:edusav/features/auth/login_screen.dart';
 import 'package:edusav/features/auth/register_screen.dart';
 import 'package:edusav/features/flop/create_flashcard.dart';
 import 'package:edusav/features/home/home_screen.dart';
+import 'package:edusav/features/leader/pending_request_screen.dart';
 import 'package:edusav/features/scan/camera_init.dart';
 import 'package:edusav/features/scan/camera_scan_screen.dart';
 import 'package:edusav/features/scan/confirm_pages_screen.dart';
@@ -26,10 +27,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // recommandé pour shared_preferences / secure_storage
 
   final container = ProviderContainer();
-  final seedService = container.read(seedServiceProvider);
-
-  await seedService.initializeRoles();
-  await seedService.initializeAdminUser();
+  try {
+    final seedService = container.read(seedServiceProvider);
+    await seedService.initializeRoles();
+    await seedService.initializeAdminUser();
+  } finally {
+    container.dispose();
+  }
 
   await initCamera();
 
@@ -166,6 +170,7 @@ class MyApp extends ConsumerWidget {
             ecoleId: args['ecoleId'] ?? '',
           );
         },
+        '/pending-requests': (context) => const PendingRequestsScreen(),
       },
     );
   }

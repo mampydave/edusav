@@ -12,7 +12,7 @@ final userCurrentSubjectsProvider = FutureProvider<List<Matiere>>((ref) async {
     return [];
   }
 
-  print("👤 Utilisateur connecté: ${user.nom} (ID: ${user.id})");
+  print("👤 Utilisateur connecté: ${user.name} (ID: ${user.id})");
 
   final db = ref.watch(databaseServiceProvider);
 

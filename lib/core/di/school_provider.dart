@@ -1,5 +1,7 @@
 import 'package:edusav/common/services/database_services.dart';
+import 'package:edusav/common/services/databases/daos/assignation_ecole_dao.dart';
 import 'package:edusav/common/services/databases/database.dart';
+import 'package:edusav/core/di/current_user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Provider pour toutes les écoles
@@ -23,4 +25,12 @@ final niveauxByEcoleProvider = FutureProvider.family<List<Niveau>, String?>((
 
   final dbService = ref.watch(databaseServiceProvider);
   return await dbService.niveaux.getByEcole(ecoleId);
+});
+
+final pendingRequestsProvider = FutureProvider<List<AssignationWithDetails>>((
+  ref,
+) async {
+  final currentUser = ref.watch(currentUserProvider);
+  final db = ref.watch(databaseServiceProvider);
+  return db.assignationsEcole.getPendingWithDetails(currentUser?.id ?? '');
 });
