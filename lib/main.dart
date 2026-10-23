@@ -7,6 +7,7 @@ import 'package:edusav/features/auth/register_screen.dart';
 import 'package:edusav/features/flop/create_flashcard.dart';
 import 'package:edusav/features/home/home_screen.dart';
 import 'package:edusav/features/leader/pending_request_screen.dart';
+import 'package:edusav/features/profile/profile_screen.dart';
 import 'package:edusav/features/scan/camera_init.dart';
 import 'package:edusav/features/scan/camera_scan_screen.dart';
 import 'package:edusav/features/scan/confirm_pages_screen.dart';
@@ -68,6 +69,7 @@ class MyApp extends ConsumerWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),
+        '/profile': (context) => const ProfileScreen(),
         '/select-level': (context) => const SelectLevelScreen(),
         '/select-subject': (context) {
           final args =

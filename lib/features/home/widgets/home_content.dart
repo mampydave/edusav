@@ -269,6 +269,7 @@ class HomeContent extends ConsumerWidget {
         .read(isCurrentUserAdminProvider.future)
         .catchError((_) => false);
     if (!context.mounted) return;
+    final navigator = Navigator.of(context);
 
     await showModalBottomSheet<void>(
       context: context,
@@ -282,7 +283,10 @@ class HomeContent extends ConsumerWidget {
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text('Mon profil'),
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+                Navigator.pop(context);
+                navigator.pushNamed('/profile');
+              },
             ),
             // rediriger vers debug screen pour l'instant
             ListTile(

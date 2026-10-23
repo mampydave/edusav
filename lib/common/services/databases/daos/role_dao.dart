@@ -22,4 +22,7 @@ class RoleDao extends DatabaseAccessor<AppDatabase> with _$RoleDaoMixin {
 
   Future<Role?> getByName(String name) =>
       (select(roles)..where((r) => r.nomRole.equals(name))).getSingleOrNull();
+
+  Future<Role?> getById(String id) =>
+      (select(roles)..where((r) => r.id.equals(id))).getSingleOrNull();
 }

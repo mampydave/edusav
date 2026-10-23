@@ -43,7 +43,7 @@ part 'database.g.dart'; // généré automatiquement par Drift, ne pas toucher
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 1; // incrémente quand on changes la structure
