@@ -1,4 +1,4 @@
-import 'package:edusav/core/di/auth_provider.dart';
+import 'package:edusav/features/auth/presentation/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,10 +21,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     await Future.delayed(const Duration(seconds: 1));
 
     // Vérifie l'utilisateur courant
-    await ref.read(authNotifierProvider.notifier).checkCurrentUser();
+    await ref.read(authControllerProvider.notifier).checkCurrentUser();
 
     // Attend que l'état soit résolu
-    final authState = ref.read(authNotifierProvider);
+    final authState = ref.read(authControllerProvider);
 
     if (!mounted) return;
 

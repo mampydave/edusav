@@ -4,7 +4,7 @@ import 'package:edusav/common/services/databases/tables.dart';
 
 part 'assignation_ecole_dao.g.dart';
 
-@DriftAccessor(tables: [AssignationsEcole, Roles, Ecoles])
+@DriftAccessor(tables: [AssignationsEcole, Roles, Ecoles, Utilisateurs])
 class AssignationEcoleDao extends DatabaseAccessor<AppDatabase>
     with _$AssignationEcoleDaoMixin {
   AssignationEcoleDao(super.db);
@@ -38,6 +38,10 @@ class AssignationEcoleDao extends DatabaseAccessor<AppDatabase>
         select(assignationsEcole).join([
           innerJoin(roles, roles.id.equalsExp(assignationsEcole.roleId)),
           innerJoin(ecoles, ecoles.id.equalsExp(assignationsEcole.ecoleId)),
+          innerJoin(
+            utilisateurs,
+            utilisateurs.id.equalsExp(assignationsEcole.userId),
+          ),
         ])..where(
           assignationsEcole.userId.equals(userId) &
               assignationsEcole.estActif.equals(true),
@@ -50,6 +54,7 @@ class AssignationEcoleDao extends DatabaseAccessor<AppDatabase>
         assignation: row.readTable(assignationsEcole),
         role: row.readTable(roles),
         ecole: row.readTable(ecoles),
+        user: row.readTable(utilisateurs),
       );
     }).toList();
   }
@@ -84,27 +89,70 @@ class AssignationEcoleDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
-  // // Récupérer les demandes en attente
-  // Future<List<AssignationWithDetails>> getPendingRequests() async {
-  //   final query = select(assignationsEcole).join([
-  //     innerJoin(roles, roles.id.equalsExp(assignationsEcole.roleId)),
-  //     innerJoin(ecoles, ecoles.id.equalsExp(assignationsEcole.ecoleId)),
-  //     innerJoin(
-  //       utilisateurs,
-  //       utilisateurs.id.equalsExp(assignationsEcole.userId),
-  //     ),
-  //   ])..where(assignationsEcole.statut.equals('PENDING'));
-  // }
+  Future<List<AssignationWithDetails>> getPendingWithDetails(
+    String currentUserId,
+  ) async {
+    final currentUser = await (select(
+      utilisateurs,
+    )..where((u) => u.id.equals(currentUserId))).getSingleOrNull();
+    if (currentUser == null || currentUser.roleId == null) return [];
+
+    final userRole = await (select(
+      roles,
+    )..where((r) => r.id.equals(currentUser.roleId!))).getSingleOrNull();
+    final isAdmin = userRole?.nomRole.toUpperCase() == 'ADMIN';
+
+    final query = select(assignationsEcole).join([
+      innerJoin(roles, roles.id.equalsExp(assignationsEcole.roleId)),
+      innerJoin(ecoles, ecoles.id.equalsExp(assignationsEcole.ecoleId)),
+      innerJoin(
+        utilisateurs,
+        utilisateurs.id.equalsExp(assignationsEcole.userId),
+      ),
+    ])..where(assignationsEcole.statut.equals('PENDING'));
+
+    if (!isAdmin) {
+      final myAssignations = await getByUser(currentUserId);
+      final myEcoleIds = myAssignations.map((a) => a.ecoleId).toSet();
+
+      if (myEcoleIds.isNotEmpty) {
+        query.where(assignationsEcole.ecoleId.isIn(myEcoleIds));
+      } else {
+        return [];
+      }
+    }
+    final rows = await query.get();
+
+    return rows.map((row) {
+      return AssignationWithDetails(
+        assignation: row.readTable(assignationsEcole),
+        role: row.readTable(roles),
+        ecole: row.readTable(ecoles),
+        user: row.readTable(utilisateurs),
+      );
+    }).toList();
+  }
+
+  // est active by iduser
+  Future<bool> isActiveByUserId(String userId) async {
+    final activeAssignation =
+        await (select(assignationsEcole)
+              ..where((a) => a.userId.equals(userId) & a.estActif.equals(true)))
+            .getSingleOrNull();
+    return activeAssignation != null;
+  }
 }
 
 class AssignationWithDetails {
   final AssignationEcole assignation;
   final Role role;
   final Ecole ecole;
+  final Utilisateur user;
 
   AssignationWithDetails({
     required this.assignation,
     required this.role,
     required this.ecole,
+    required this.user,
   });
 }

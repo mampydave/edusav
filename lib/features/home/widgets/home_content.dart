@@ -1,7 +1,8 @@
 import 'package:edusav/core/constants/app_colors.dart';
-import 'package:edusav/core/di/auth_provider.dart';
+import 'package:edusav/features/auth/presentation/auth_controller.dart';
 import 'package:edusav/core/di/current_user_provider.dart';
 import 'package:edusav/core/di/matiere_provider.dart';
+import 'package:edusav/features/debug/debug_db_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -278,10 +279,33 @@ class HomeContent extends ConsumerWidget {
               title: const Text('Mon profil'),
               onTap: () => Navigator.pop(context),
             ),
+            // rediriger vers debug screen pour l'instant
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Paramètres'),
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DebugDbScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.verified_user_outlined,
+                color: Colors.orange,
+              ),
+              title: const Text('Validation des comptes'),
+              subtitle: const Text('Demandes en attente d\'approbation'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                  context,
+                  '/pending-requests',
+                ); // Ou utilise push si tu préfères
+              },
             ),
             const Divider(),
             ListTile(
@@ -294,7 +318,7 @@ class HomeContent extends ConsumerWidget {
                 Navigator.pop(context); // Ferme le bottom sheet
 
                 // Déconnexion
-                await ref.read(authNotifierProvider.notifier).logout();
+                await ref.read(authControllerProvider.notifier).logout();
 
                 // Redirection sûre
                 if (context.mounted) {

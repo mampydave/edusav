@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:edusav/common/services/database_services.dart';
 import 'package:edusav/common/services/databases/database.dart';
 import 'package:edusav/core/di/current_user_provider.dart';
+import 'package:edusav/features/auth/domain/auth_user.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -14,7 +15,7 @@ final scanSaveProvider = Provider<ScanSaveService>((ref) {
 
 class ScanSaveService {
   final DatabaseService db;
-  final Utilisateur? currentUser;
+  final AuthUser? currentUser;
 
   ScanSaveService(this.db, this.currentUser);
 

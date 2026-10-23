@@ -1,17 +1,26 @@
-# edusav
+# EDUSAV
 
-A new Flutter project.
+Application Flutter d'apprentissage avec stockage local Drift, gestion d'etat Riverpod, numerisation de documents et revision par flashcards.
 
-## Getting Started
+## Prerequis
 
-This project is a starting point for a Flutter application.
+- Flutter et Dart compatibles avec le SDK defini dans `pubspec.yaml`.
+- Android Studio ou Xcode selon la plateforme cible.
 
-A few resources to get you started if this is your first Flutter project:
+## Demarrage
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```sh
+flutter pub get
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Verification
+
+```sh
+flutter analyze
+flutter test
+```
+
+## Architecture
+
+Consulter [docs/architecture.md](docs/architecture.md) pour les responsabilites des couches, la direction des dependances, la nomenclature et la migration par fonctionnalite.

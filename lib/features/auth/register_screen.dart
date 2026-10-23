@@ -1,5 +1,5 @@
 import 'package:edusav/common/services/databases/database.dart';
-import 'package:edusav/core/di/auth_provider.dart';
+import 'package:edusav/features/auth/presentation/auth_controller.dart';
 import 'package:edusav/core/di/role_provider.dart';
 import 'package:edusav/core/di/school_provider.dart';
 import 'package:flutter/material.dart';
@@ -42,12 +42,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final authState = ref.watch(authNotifierProvider);
+    final authState = ref.watch(authControllerProvider);
     final rolesAsync = ref.watch(rolesProvider);
     final ecolesAsync = ref.watch(ecolesProvider);
     final niveauxAsync = ref.watch(niveauxProvider);
 
-    ref.listen(authNotifierProvider, (prev, next) {
+    ref.listen(authControllerProvider, (prev, next) {
       next.whenData((state) {
         if (state is AuthAuthenticated) {
           Navigator.pushReplacementNamed(context, '/home');
@@ -456,7 +456,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     setState(() => _isLoading = true);
 
-    final notifier = ref.read(authNotifierProvider.notifier);
+    final notifier = ref.read(authControllerProvider.notifier);
 
     if (_selectedRole!.nomRole.toUpperCase() == 'ELEVE') {
       await notifier.registerEleve(
