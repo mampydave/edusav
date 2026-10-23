@@ -19,7 +19,7 @@ class DriftAuthRepository implements AuthRepository {
   Future<AuthAccount?> findAccountByEmail(String email) async {
     final user = await _database.utilisateurDao.getByEmail(email);
     if (user == null) return null;
-    return AuthAccount(user: _toAuthUser(user), passwordHash: user.mdp);
+    return AuthAccount(user: await _toAuthUser(user), passwordHash: user.mdp);
   }
 
   @override
@@ -85,7 +85,14 @@ class DriftAuthRepository implements AuthRepository {
       }
     });
 
-    return AuthUser(id: userId, name: name, email: email, roleId: roleId);
+    final role = await _database.roleDao.getById(roleId);
+    return AuthUser(
+      id: userId,
+      name: name,
+      email: email,
+      roleId: roleId,
+      roleName: role?.nomRole,
+    );
   }
 
   @override
@@ -131,10 +138,16 @@ class DriftAuthRepository implements AuthRepository {
     await _storage.delete(key: _authTokenKey);
   }
 
-  AuthUser _toAuthUser(Utilisateur user) => AuthUser(
-    id: user.id,
-    name: user.nom,
-    email: user.email,
-    roleId: user.roleId,
-  );
+  Future<AuthUser> _toAuthUser(Utilisateur user) async {
+    final role = user.roleId == null
+        ? null
+        : await _database.roleDao.getById(user.roleId!);
+    return AuthUser(
+      id: user.id,
+      name: user.nom,
+      email: user.email,
+      roleId: user.roleId,
+      roleName: role?.nomRole,
+    );
+  }
 }
