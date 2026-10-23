@@ -1,5 +1,5 @@
 import 'package:edusav/common/services/database_services.dart';
-import 'package:edusav/common/services/databases/database.dart';
+import 'package:edusav/common/services/databases/daos/assignation_ecole_dao.dart';
 import 'package:edusav/core/constants/app_colors.dart';
 import 'package:edusav/core/di/current_user_provider.dart';
 import 'package:edusav/core/di/school_provider.dart';
@@ -17,9 +17,42 @@ class PendingRequestsScreen extends ConsumerStatefulWidget {
 class _PendingRequestsScreenState extends ConsumerState<PendingRequestsScreen> {
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserProvider);
-    final pendingAsync = ref.watch(pendingRequestsProvider);
+    final adminAccess = ref.watch(isCurrentUserAdminProvider);
 
+    return adminAccess.when(
+      data: (isAdmin) {
+        if (!isAdmin) return _buildAccessDenied(context);
+        return _buildRequestsScreen(
+          context,
+          ref.watch(pendingRequestsProvider),
+        );
+      },
+      loading: () =>
+          _buildStatusScreen(context, const CircularProgressIndicator()),
+      error: (_, __) => _buildAccessDenied(context),
+    );
+  }
+
+  Widget _buildAccessDenied(BuildContext context) => _buildStatusScreen(
+    context,
+    const Text('Accès réservé à l’administrateur.'),
+  );
+
+  Widget _buildStatusScreen(BuildContext context, Widget child) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Demandes en attente'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(child: child),
+    );
+  }
+
+  Widget _buildRequestsScreen(
+    BuildContext context,
+    AsyncValue<List<AssignationWithDetails>> pendingAsync,
+  ) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Demandes en attente'),

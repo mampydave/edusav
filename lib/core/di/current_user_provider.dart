@@ -31,6 +31,15 @@ final currentUserProvider = Provider<AuthUser?>((ref) {
   );
 });
 
+final isCurrentUserAdminProvider = FutureProvider<bool>((ref) async {
+  final user = ref.watch(currentUserProvider);
+  if (user == null || user.roleId == null) return false;
+
+  final db = ref.watch(databaseServiceProvider);
+  final adminRoleId = await db.roles.getRoleIdByName('ADMIN');
+  return user.roleId == adminRoleId;
+});
+
 final currentAppartenanceProvider = FutureProvider<Appartenance?>((ref) async {
   final user = ref.watch(currentUserProvider);
   if (user == null) {

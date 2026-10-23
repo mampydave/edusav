@@ -30,7 +30,12 @@ final niveauxByEcoleProvider = FutureProvider.family<List<Niveau>, String?>((
 final pendingRequestsProvider = FutureProvider<List<AssignationWithDetails>>((
   ref,
 ) async {
+  final isAdmin = await ref.watch(isCurrentUserAdminProvider.future);
+  if (!isAdmin) return [];
+
   final currentUser = ref.watch(currentUserProvider);
+  if (currentUser == null) return [];
+
   final db = ref.watch(databaseServiceProvider);
-  return db.assignationsEcole.getPendingWithDetails(currentUser?.id ?? '');
+  return db.assignationsEcole.getPendingWithDetails(currentUser.id);
 });
