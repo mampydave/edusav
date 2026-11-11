@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:edusav/common/services/seed_service.dart';
 import 'package:edusav/core/di/providers.dart';
+import 'package:edusav/core/supabase/supabase_bootstrap.dart';
 import 'package:edusav/core/theme/app_theme.dart';
 import 'package:edusav/features/auth/login_screen.dart';
 import 'package:edusav/features/auth/register_screen.dart';
@@ -26,6 +27,8 @@ import 'package:flutter_quill/flutter_quill.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // recommandé pour shared_preferences / secure_storage
+
+  await SupabaseBootstrap.initialize();
 
   final container = ProviderContainer();
   try {

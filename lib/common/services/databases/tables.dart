@@ -285,3 +285,32 @@ class Flashcards extends Table {
   @override
   Set<Column> get primaryKey => {id};
 }
+
+@DataClassName('SyncOperation')
+class SyncOutbox extends Table {
+  TextColumn get id => text()();
+  TextColumn get entityType => text().named('entity_type')();
+  TextColumn get entityId => text().named('entity_id')();
+  TextColumn get operationType => text().named('operation_type')();
+  TextColumn get payload => text()();
+  IntColumn get baseVersion => integer().nullable().named('base_version')();
+  TextColumn get status => text().withDefault(const Constant('pending'))();
+  IntColumn get attempts => integer().withDefault(const Constant(0))();
+  TextColumn get lastError => text().nullable().named('last_error')();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get lastAttemptAt =>
+      dateTime().nullable().named('last_attempt_at')();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('SyncMetadata')
+class SyncMetadataEntries extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
