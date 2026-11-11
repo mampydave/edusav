@@ -54,6 +54,7 @@ dependencies:
   google_mlkit_text_recognition: ^0.15.1
   pdfx: ^2.9.2
   reorderable_grid_view: ^2.2.8
+  supabase_flutter: ^2.18.3
 
 dev_dependencies:
   flutter_test:

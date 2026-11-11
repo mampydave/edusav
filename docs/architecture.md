@@ -1,6 +1,8 @@
 # Architecture
 
-EDUSAV uses a feature-first, layered architecture. Code for one capability lives under `lib/features/<feature>/`; shared infrastructure belongs in `lib/core/`. The current migration starts with authentication. Existing features may still use legacy providers under `lib/core/di` until migrated.
+EDUSAV uses a feature-first, layered architecture. Code for one capability lives under `lib/features/<feature>/`; shared infrastructure belongs in `lib/core/`. Existing features may still use legacy providers under `lib/core/di` until migrated.
+
+The app is offline-first: Drift is the local read/write store. Supabase is the shared cloud backend when configured with `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` using `--dart-define`. Never ship a Supabase `service_role` key in the mobile client. Cloud synchronization is being introduced through a local outbox and a sync coordinator; enabling the client alone does not yet synchronize local records.
 
 ## Layers
 

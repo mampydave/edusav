@@ -12,6 +12,7 @@ import 'package:edusav/common/services/databases/daos/matiere_dao.dart';
 import 'package:edusav/common/services/databases/daos/niveau_dao.dart';
 import 'package:edusav/common/services/databases/daos/page_dao.dart';
 import 'package:edusav/common/services/databases/daos/role_dao.dart';
+import 'package:edusav/common/services/databases/daos/sync_dao.dart';
 import 'package:edusav/common/services/databases/daos/utilisateur_dao.dart';
 import 'package:edusav/common/services/databases/tables.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,7 +25,7 @@ part 'database.g.dart'; // généré automatiquement par Drift, ne pas toucher
     Roles, Permissions, RolePermissions,
     Ecoles, Niveaux, Utilisateurs, Appartenances,
     Matieres, Lecons, Curriculums, Pages,
-    Flashcards, AssignationsEcole,
+    Flashcards, AssignationsEcole, SyncOutbox, SyncMetadataEntries,
     // Revisions,
     // Roles, Permissions, RolePermissions → à ajouter plus tard
   ],
@@ -40,13 +41,14 @@ part 'database.g.dart'; // généré automatiquement par Drift, ne pas toucher
     EcoleDao,
     PageDao,
     AssignationEcoleDao,
+    SyncDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1; // incrémente quand on changes la structure
+  int get schemaVersion => 2;
 
   // Optionnel : migrations futures
   @override
@@ -58,7 +60,10 @@ class AppDatabase extends _$AppDatabase {
         await customStatement('PRAGMA foreign_keys = ON');
       },
       onUpgrade: (migrator, from, to) async {
-        // ex: if (from < 2) await migrator.addColumn(...);
+        if (from < 2) {
+          await migrator.createTable(syncOutbox);
+          await migrator.createTable(syncMetadataEntries);
+        }
       },
     );
   }
